@@ -8,13 +8,14 @@ let server: Server;
 const startServer = async () => {
   try {
     server = app.listen(envVars.PORT, () => {
-      console.log(`✅ Server is listening to port ${envVars.PORT}`);
+      console.log(`🚚 Parcel Delivery API is running on Port: ${envVars.PORT}`);
     });
 
     await mongoose.connect(envVars.DB_URL)
-    console.log(`✅ Connected to DB!`)
+    console.log(`✅ Connected to MongoDB Successfully!`)
+
   } catch (error) {
-    console.log(`❌ Server Error ${error}`);
+    console.log(`❌ Failed to connect ${error}`);
   }
 };
 
