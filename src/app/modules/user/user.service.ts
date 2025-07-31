@@ -49,8 +49,41 @@ const getAllUsers = async (query: Record<string, string>) =>{
   }
 };
 
+// get single user
+const getSingleUser = async(id: string) =>{
+  const user = await User.findById(id).select("-password");
+  return {
+    data: user
+  }
+};
+
+// update user 
+const updateUser = async(userId: string, payload: Partial<IUser>, ) =>{
+  const isUserExist = await User.findById(userId);
+
+  if(!isUserExist){
+    throw new AppError(httpStatus.NOT_FOUND, "User Not Found")
+  };
+
+  const newUpdateUser = await User.findByIdAndUpdate(userId, payload, { new: true, runValidators: true });
+
+  return newUpdateUser
+};
+
+// get me
+const getMe = async (userId: string) =>{
+  const user = await User.findById(userId).select("-password");
+
+  return {
+    data: user
+  }
+};
+
 
 export const UserServices = {
   createUser,
   getAllUsers,
+  getSingleUser,
+  updateUser,
+  getMe
 };
