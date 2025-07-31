@@ -4,6 +4,8 @@ import { IAuthProvider, IUser } from "./user.interface";
 import { User } from "./user.model";
 import { envVars } from '../../config/env';
 import bcryptjs from "bcryptjs"
+import { userSearchableFields } from './user.constant';
+import { QueryBuilder } from '../../utils/QueryBuilder';
 
 // create user
 const createUser = async (payload: Partial<IUser>) =>{
@@ -26,6 +28,29 @@ const createUser = async (payload: Partial<IUser>) =>{
   return user;
 };
 
+// get all users
+const getAllUsers = async (query: Record<string, string>) =>{
+  const queryBuilder = new QueryBuilder(User.find(), query);
+  
+  const userData = queryBuilder
+  .filter()
+  // .search(userSearchableFields)
+  // .sort()
+  // .fields()
+  // .paginate();
+
+  const [data] = await Promise.all([
+    userData.build(),
+    // queryBuilder.getMeta()
+  ])
+
+  return {
+    data
+  }
+};
+
+
 export const UserServices = {
-  createUser
+  createUser,
+  getAllUsers,
 };
