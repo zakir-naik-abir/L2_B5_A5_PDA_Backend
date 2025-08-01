@@ -1,5 +1,7 @@
+import bcryptjs from 'bcryptjs';
 import { model, Schema } from "mongoose";
 import { IAuthProvider, IsActive, IUser, Role } from "./user.interface";
+import { envVars } from "../../config/env";
 
 const authProviderSchema = new Schema<IAuthProvider>(
   {
@@ -36,6 +38,20 @@ const userSchema = new Schema<IUser>({
   versionKey: false,
   timestamps: true
 });
+
+
+userSchema.pre('save', async function (next) {
+  if(this.isModified('password') && this.password){
+    this.password = await bcryptjs.hash(
+      this.password, Number(envVars.BCRYPT_SALT_ROUND),
+    );
+  }
+  next();
+});
+
+userSchema.statics.isUserExists = async function (email: string) {
+  return await this.findOne({ email }).select('+password');
+};
 
 
 export const User = model<IUser>("User", userSchema);
